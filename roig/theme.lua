@@ -14,21 +14,23 @@ sharedthemes  = shared .. "/themes"
 themes        = config .. "/themes"
 themename     = "/roig"
 if not awful.util.file_readable(themes .. themename .. "/theme.lua") then
-       themes = sharedthemes
+   themes = sharedthemes
 end
 themedir      = config .. "/roig"
 
 wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/colorwheel2560.jpg"
+wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/tflXg.jpg"
+wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/upsct.jpg"
 wallpaper2    = themedir .. "/background.jpg"
 
 if awful.util.file_readable(wallpaper1) then
-	theme.wallpaper_cmd = { "awsetbg " .. wallpaper1 }
+   theme.wallpaper_cmd = { "awsetbg " .. wallpaper1 }
 else
-	theme.wallpaper_cmd = { "awsetbg " .. wallpaper2 }
+   theme.wallpaper_cmd = { "awsetbg " .. wallpaper2 }
 end
 --}}}
 
-theme.font          = "sans 9"
+theme.font          = "Terminus 9"
 
 theme.bg_normal     = "#000000"
 theme.bg_focus      = "#310404"
@@ -41,9 +43,11 @@ theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 
 theme.border_width  = "1"
-theme.border_normal = "#000000"
-theme.border_focus  = "#810404"
+theme.border_normal = "#303030"
+theme.border_focus  = "#B40404"
 theme.border_marked = "#91231c"
+
+theme.bg_menu_normal = "#000000"
 
 -- There are other variable sets
 -- overriding the default one when
@@ -72,14 +76,20 @@ theme.menu_width  = "100"
 --theme.bg_widget = "#cc0000"
 
 -- {{{ Widgets
-theme.fg_widget        = "#AECF96"
+theme.bg_widget        = "#080808"
+
+theme.fg_widget        = "#A0CF7C"
 theme.fg_center_widget = "#88A175"
-theme.fg_end_widget    = "#FF5656"
+theme.fg_end_widget    = "#FF4646"
 theme.fg_off_widget    = "#191B1F"
-theme.fg_netup_widget  = "#7F9F7F"
-theme.fg_netdn_widget  = theme.fg_urgent
-theme.bg_widget        = theme.bg_normal
+
 theme.border_widget    = theme.bg_normal
+
+theme.fg_widget_netup  = "#FF5F5F"
+theme.fg_widget_netdn  = "#5F5FFF"
+
+theme.fg_widget_value  = theme.fg_normal
+theme.fg_widget_label  = "#737d8c"
 -- }}}
 
 -- Define the image to load
