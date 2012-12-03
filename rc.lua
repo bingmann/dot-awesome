@@ -297,11 +297,11 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s], separator,
-        on(2,mytextclock), on(2,separator),
-        on(2,mysystray), on(2,separator),
-        on(2,volbar.widget), on(2,volicon), on(2,separator),
-	on(2,cpuwidget.widget), on(2,separator),
-        on(2,netwidget.widget), on(2,separator),
+        on(1,mytextclock), on(1,separator),
+        on(1,mysystray), on(1,separator),
+        on(1,volbar.widget), on(1,volicon), on(1,separator),
+	on(1,cpuwidget.widget), on(1,separator),
+        on(1,netwidget.widget), on(1,separator),
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
