@@ -363,12 +363,12 @@ globalkeys = awful.util.table.join(
 
     awful.key({ modkey,           }, "-",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "=",     function () awful.tag.incmwfact(-0.05)    end),
-    awful.key({ modkey, "Shift"   }, "-",     function () awful.tag.incnmaster( 1)      end),
-    awful.key({ modkey, "Shift"   }, "=",     function () awful.tag.incnmaster(-1)      end),
-    awful.key({ modkey, "Control" }, "-",     function () awful.tag.incncol( 1)         end),
-    awful.key({ modkey, "Control" }, "=",     function () awful.tag.incncol(-1)         end),
-    awful.key({ modkey,           }, "Space", function () awful.layout.inc(layouts,  1) end),
-    awful.key({ modkey, "Shift"   }, "Space", function () awful.layout.inc(layouts, -1) end),
+    awful.key({ modkey, "Shift"   }, "=",     function () awful.tag.incnmaster( 1)      end),
+    awful.key({ modkey, "Shift"   }, "-",     function () awful.tag.incnmaster(-1)      end),
+    awful.key({ modkey, "Control" }, "=",     function () awful.tag.incncol( 1)         end),
+    awful.key({ modkey, "Control" }, "-",     function () awful.tag.incncol(-1)         end),
+    awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
+    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
@@ -381,6 +381,7 @@ globalkeys = awful.util.table.join(
     -- Program Launchers
     awful.key({ modkey },            "Return", function () exec(terminal) end),
     awful.key({ modkey },            "w",     function () exec("firefox") end),
+    --awful.key({ modkey },            "w",     function () exec("chromium") end),
     awful.key({ modkey },            "f",     function () exec("thunar") end),
     awful.key({ modkey },            "e",     function () exec("emacsclient -nc --alternate-editor emacs") end),
 
@@ -504,6 +505,9 @@ awful.rules.rules = {
      properties = { floating = true }
    },
    { rule = { class = "Pidgin", role = "conversation" },
+     properties = { floating = true }
+   },
+   { rule = { class = "thunar", role = "file operation" },
      properties = { floating = true }
    },
 }
