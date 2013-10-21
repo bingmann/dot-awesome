@@ -383,7 +383,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey },            "w",     function () exec("firefox") end),
     --awful.key({ modkey },            "w",     function () exec("chromium") end),
     awful.key({ modkey },            "f",     function () exec("thunar") end),
-    awful.key({ modkey },            "e",     function () exec("emacsclient -nc --alternate-editor emacs ~/Dropbox/0-Work/org-mode/TODO.org") end),
+    awful.key({ modkey },            "e",     function () exec("emacsclient -nc --alternate-editor emacs ~/Dropbox/0-Work/TODO.org") end),
 
     awful.key({ modkey, "Control", "Shift" }, "Return", function () exec(terminal) end), -- alternative terminal hotkey
 
