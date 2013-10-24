@@ -18,9 +18,9 @@ if not awful.util.file_readable(themes .. themename .. "/theme.lua") then
 end
 themedir      = config .. "/roig"
 
-wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/colorwheel2560.jpg"
 wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/tflXg.jpg"
 wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/upsct.jpg"
+wallpaper1    = home .. "/Dropbox/0-Dokumente/wallpaper/colorwheel2560.jpg"
 wallpaper2    = themedir .. "/background.jpg"
 
 if awful.util.file_readable(wallpaper1) then
