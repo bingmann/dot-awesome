@@ -108,7 +108,7 @@ myshutdownmenu = {
    { "logout", awesome.quit }
 }
 table.insert(mymenulist, 1, { "awesome", myawesomemenu, beautiful.awesome_icon })
-table.insert(mymenulist, { "Tassen", "cryptote /home/bingmann/Dropbox/Tassen/Tassen.ect", freedesktop.utils.lookup_icon({icon = 'cryptote'}) })
+table.insert(mymenulist, { "Tassen", "cryptote /home/bingmann/Dropbox/0-Work/Tassen/Tassen.ect", freedesktop.utils.lookup_icon({icon = 'cryptote'}) })
 table.insert(mymenulist, { "Terminal", terminal, freedesktop.utils.lookup_icon({icon = 'terminal'}) })
 table.insert(mymenulist, { "Shutdown", myshutdownmenu, freedesktop.utils.lookup_icon({icon = 'exit'}) })
 
