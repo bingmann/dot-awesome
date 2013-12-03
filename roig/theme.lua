@@ -21,12 +21,13 @@ themedir      = config .. "/roig"
 wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/tflXg.jpg"
 wallpaper1    = home .. "/Dropbox/Dokumente/Wallpaper/upsct.jpg"
 wallpaper1    = home .. "/Dropbox/0-Dokumente/wallpaper/colorwheel2560.jpg"
+wallpaper1    = home .. "/Dropbox/0-Dokumente/wallpaper/thumb-1766844.png"
 wallpaper2    = themedir .. "/background.jpg"
 
 if awful.util.file_readable(wallpaper1) then
-   theme.wallpaper_cmd = { "awsetbg " .. wallpaper1 }
+   theme.wallpaper_cmd = { "awsetbg -a " .. wallpaper1 }
 else
-   theme.wallpaper_cmd = { "awsetbg " .. wallpaper2 }
+   theme.wallpaper_cmd = { "awsetbg -a " .. wallpaper2 }
 end
 --}}}
 
