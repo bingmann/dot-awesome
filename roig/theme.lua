@@ -33,8 +33,8 @@ end
 
 theme.font          = "Terminus 9"
 
-theme.bg_normal     = "#000000"
-theme.bg_focus      = "#310404"
+theme.bg_normal     = "#00000000"
+theme.bg_focus      = "#31040480"
 theme.bg_urgent     = "#ff0000"
 theme.bg_minimize   = "#444444"
 
@@ -132,6 +132,21 @@ theme.layout_spiral  = themedir .. "/layouts/spiralw.png"
 theme.layout_dwindle = themedir .. "/layouts/dwindlew.png"
 
 theme.awesome_icon = themedir .. "/awesome16.png"
+
+theme.layout_fairh = themedir .. "/layouts/fairht.png"
+theme.layout_fairv = themedir .. "/layouts/fairvt.png"
+theme.layout_floating  = themedir .. "/layouts/floatingt.png"
+theme.layout_magnifier = themedir .. "/layouts/magnifiert.png"
+theme.layout_max = themedir .. "/layouts/maxt.png"
+theme.layout_fullscreen = themedir .. "/layouts/fullscreent.png"
+theme.layout_tilebottom = themedir .. "/layouts/tilebottomt.png"
+theme.layout_tileleft   = themedir .. "/layouts/tileleftt.png"
+theme.layout_tile = themedir .. "/layouts/tilet.png"
+theme.layout_tiletop = themedir .. "/layouts/tiletopt.png"
+theme.layout_spiral  = themedir .. "/layouts/spiralt.png"
+theme.layout_dwindle = themedir .. "/layouts/dwindlet.png"
+
+theme.awesome_icon = themedir .. "/awesome16t.png"
 
 return theme
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:encoding=utf-8:textwidth=80
