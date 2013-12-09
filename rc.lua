@@ -296,7 +296,7 @@ for s = 1, screen.count() do
             mypromptbox[s],
             layout = awful.widget.layout.horizontal.leftright
         },
-        mylayoutbox[s], separator,
+        --mylayoutbox[s], separator,
         on(1,mytextclock), on(1,separator),
         on(1,mysystray), on(1,separator),
         on(1,volbar.widget), on(1,volicon), on(1,separator),
