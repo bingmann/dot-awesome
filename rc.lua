@@ -297,11 +297,11 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         --mylayoutbox[s], separator,
-        on(1,mytextclock), on(1,separator),
-        on(1,mysystray), on(1,separator),
-        on(1,volbar.widget), on(1,volicon), on(1,separator),
-	on(1,cpuwidget.widget), on(1,separator),
-        on(1,netwidget.widget), on(1,separator),
+        on(2,mytextclock), on(2,separator),
+        on(2,mysystray), on(2,separator),
+        on(2,volbar.widget), on(2,volicon), on(2,separator),
+	on(2,cpuwidget.widget), on(2,separator),
+        on(2,netwidget.widget), on(2,separator),
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -374,9 +374,9 @@ globalkeys = awful.util.table.join(
 
     -- Run Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
-    awful.key({ modkey },            "s",     function () menubar.show() end),
+    --awful.key({ modkey },            "s",     function () menubar.show() end),
 
-    awful.key({ modkey },            "d",     function () exec("dmenu_run -i -p 'Run:' -nf '#ffffff' -nb '#000000' -sf '#ff0000' -sb '#310404' -fn '-*-terminus-medium-r-*-*-*-120-*-*-*-*-*-*'") end),
+    awful.key({ modkey, "Shift" },   "r",     function () exec("dmenu_run -i -p 'Run:' -nf '#ffffff' -nb '#000000' -sf '#ff0000' -sb '#310404' -fn '-*-terminus-medium-r-*-*-*-120-*-*-*-*-*-*'") end),
 
     -- Program Launchers
     awful.key({ modkey },            "Return", function () exec(terminal) end),
@@ -391,6 +391,7 @@ globalkeys = awful.util.table.join(
 
     -- Screensaver
     awful.key({ "Control", altkey }, "Delete", function () exec("xscreensaver-command -lock") end),
+    awful.key({ modkey },            "l",     function () exec("xscreensaver-command -lock") end),
 
     -- Keybindings for quickly making screenshots
     awful.key({ },                   "Print", function () exec("bash -c \"xwd -root | convert - ~/screenshot-$(date +%s).png\"") end),
