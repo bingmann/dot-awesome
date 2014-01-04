@@ -374,7 +374,7 @@ globalkeys = awful.util.table.join(
 
     -- Run Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
-    --awful.key({ modkey },            "s",     function () menubar.show() end),
+    --awful.key({ modkey },            "r",     function () menubar.show() end),
 
     awful.key({ modkey, "Shift" },   "r",     function () exec("dmenu_run -i -p 'Run:' -nf '#ffffff' -nb '#000000' -sf '#ff0000' -sb '#310404' -fn '-*-terminus-medium-r-*-*-*-120-*-*-*-*-*-*'") end),
 
