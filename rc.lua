@@ -10,6 +10,8 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+-- Vicious monitoring library
+local vicious = require("vicious")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -74,7 +76,7 @@ local layouts =
 -- {{{ Wallpaper
 if beautiful.wallpaper then
     for s = 1, screen.count() do
-        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+        gears.wallpaper.maximized(beautiful.wallpaper, s, false)
     end
 end
 -- }}}
@@ -118,8 +120,98 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- {{{ Wibox
+-- Create separator of 2px
+local separator = wibox.widget.textbox()
+separator:set_markup(" ")
+
 -- Create a textclock widget
-local mytextclock = awful.widget.textclock("%Y-%m-%d %H:%M", 10)
+local mytextclock = awful.widget.textclock(" %Y-%m-%d %H:%M ", 10)
+
+-- {{{ CPU widget
+local cpuicon = wibox.widget.imagebox(beautiful.widget_cpuicon)
+-- initialize graph
+local cpuwidget = awful.widget.graph({ width = 60 })
+cpuwidget:set_background_color(beautiful.bg_widget)
+cpuwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 0,10 },
+                      stops = { {0, beautiful.fg_widget1}, {0.5, beautiful.fg_widget2}, {1, beautiful.fg_widget3} }})
+
+local cpuwidget_tooltip = awful.tooltip({ objects = { cpuicon, cpuwidget } })
+-- register vicious action
+vicious.register(cpuwidget, vicious.widgets.cpu, 
+    function (widget, args)
+        cpuwidget_tooltip:set_text("CPU Usage: " .. args[1] .. "%")
+        return args[1]
+end)
+-- }}} CPU widget
+
+-- {{{ Network widget
+local neticon = wibox.widget.imagebox(beautiful.widget_dishicon)
+-- Initialize widgets
+local netwidget = awful.widget.graph({ width = 60 })
+netwidget:set_background_color(beautiful.bg_widget)
+netwidget:set_stack(true):set_scale(true)
+netwidget:set_stack_colors({ beautiful.fg_widget_netup, beautiful.fg_widget_netdn })
+local netwidget_tooltip = awful.tooltip({ objects = { neticon, netwidget } })
+-- register vicious action
+vicious.register(neticon, vicious.widgets.net,
+    function (widget, args)
+        -- We sum up/down value for all interfaces
+        local up, down = 0, 0
+        local iface
+        for name, value in pairs(args) do
+            iface = name:match("^{(%S+) down_b}$")
+            if iface and iface ~= "lo" then down = down + value end
+            iface = name:match("^{(%S+) up_b}$")
+            if iface and iface ~= "lo" then up = up + value end
+        end
+        -- Update the graph
+        netwidget:add_value(up, 1)
+        netwidget:add_value(down, 2)
+        -- Format the string representation
+        local format = function(val)
+            if val > 900000 then
+                return string.format("%.1f MiB", val/1048576.)
+            elseif val > 900 then
+                return string.format("%.1f KiB", val/1024.)
+            end
+            return string.format("%d B", val)
+        end
+        local ft = function (color) return '<span font="Terminus 8" color="' .. color .. '">' end
+        netwidget_tooltip:set_text(
+            string.format(
+                ft(beautiful.fg_widget_netup) .. 'Up</span>' ..
+                    ft(beautiful.fg_widget_netlabel) .. '/</span>' ..
+                    ft(beautiful.fg_widget_netdn) .. 'Down</span>' ..
+                    ft(beautiful.fg_widget_netlabel) .. ':</span> ' ..
+                    ft(beautiful.fg_widget_netup) .. '%08s</span>' ..
+                    ft(beautiful.fg_widget_netlabel) .. '/</span>' ..
+                    ft(beautiful.fg_widget_netdn) .. '%08s</span>', format(up), format(down)))
+end)
+-- }}} Network widget
+
+-- {{{ Volume widget
+local volicon = wibox.widget.imagebox(beautiful.widget_spkricon)
+-- initialize progressbar
+local volwidget = awful.widget.progressbar()
+volwidget:set_vertical(true):set_ticks(true)
+volwidget:set_width(6)
+volwidget:set_ticks_size(100)
+volwidget:set_background_color("#000000")
+volwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 0,10 },
+                      stops = { {0, beautiful.fg_widget1}, {0.5, beautiful.fg_widget2}, {1, beautiful.fg_widget3} }})
+-- enable caching
+vicious.cache(vicious.widgets.volume)
+-- register vicious action
+vicious.register(volwidget, vicious.widgets.volume, "$1", 2, "PCM")
+-- Register buttons
+volicon:buttons(awful.util.table.join(
+    awful.button({ }, 1, function () awful.util.spawn("xfce4-mixer") end),
+    awful.button({ }, 4, function () awful.util.spawn("amixer -q set PCM 2dB+", false) vicious.force({volwidget}) end),
+    awful.button({ }, 5, function () awful.util.spawn("amixer -q set PCM 2dB-", false) vicious.force({volwidget}) end)
+))
+-- Register assigned buttons
+volwidget:buttons(volicon:buttons())
+-- }}} Volume widget
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -194,13 +286,25 @@ for s = 1, screen.count() do
     local left_layout = wibox.layout.fixed.horizontal()
     left_layout:add(mylauncher)
     left_layout:add(mytaglist[s])
+    left_layout:add(mylayoutbox[s])
     left_layout:add(mypromptbox[s])
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then right_layout:add(wibox.widget.systray()) end
-    right_layout:add(mytextclock)
-    right_layout:add(mylayoutbox[s])
+    if s == screen.count() then
+        right_layout:add(separator)
+        right_layout:add(cpuicon)
+        right_layout:add(cpuwidget)
+        right_layout:add(separator)
+        right_layout:add(neticon)
+        right_layout:add(netwidget)
+        right_layout:add(separator)
+        right_layout:add(volicon)
+        right_layout:add(volwidget)
+        right_layout:add(separator)
+        right_layout:add(wibox.widget.systray())
+        right_layout:add(mytextclock)
+    end
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
@@ -292,8 +396,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
     -- Prompts
-    awful.key({ modkey },            "r",     function () menubar.show() end),
-    awful.key({ modkey, "Shift" },   "r",     function () mypromptbox[mouse.screen]:run() end),
+    awful.key({ modkey },            "s",     function () menubar.show() end),
+    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
     awful.key({ modkey }, "x",
               function ()
@@ -407,11 +511,14 @@ awful.rules.rules = {
       properties = { floating = true } },
     { rule = { class = "pinentry" },
       properties = { floating = true } },
-    { rule = { class = "gimp" },
+    { rule = { class = "gimp-2.8" },
       properties = { floating = true } },
     -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { tag = tags[1][2] } },
+    { rule = { class = "Thunar", name = "File Operation Progress" },
+      properties = { floating = true },
+    },
 }
 -- }}}
 

@@ -54,7 +54,16 @@ theme.menu_bg_focus = "#310404"
 -- You can add as many variables as
 -- you wish and access them by using
 -- beautiful.variable in your rc.lua
---theme.bg_widget = "#cc0000"
+
+theme.bg_widget     = theme.bg_normal
+
+theme.fg_widget1    = "#FF6666"
+theme.fg_widget2    = "#F8C175"
+theme.fg_widget3    = "#A0CF7C"
+
+theme.fg_widget_netup  = "#FF5F5F"
+theme.fg_widget_netdn  = "#5F5FFF"
+theme.fg_widget_netlabel = "#737d8c"
 
 -- Define the image to load
 titlebardir = themedir .. "/titlebar/simple/"
@@ -84,7 +93,7 @@ theme.titlebar_maximized_button_focus_active  = titlebardir .. "/maximized_focus
 theme.wallpaper = "/home/tb/Dropbox/0-Dokumente/wallpaper/desktop/colorwheel2560.jpg"
 
 -- You can use your own layout icons like this:
-layoutdir = themedir .. "/layouts/red-transparent/"
+layoutdir = themedir .. "/layouts/red-small-transparent/"
 theme.layout_fairh = layoutdir .. "/fairh.png"
 theme.layout_fairv = layoutdir .. "/fairv.png"
 theme.layout_floating  = layoutdir .. "/floating.png"
@@ -103,6 +112,15 @@ theme.awesome_icon = themedir .. "/awesome16t.png"
 -- Define the icon theme for application icons. If not set then the icons 
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
 theme.icon_theme = nil
+
+-- Additional widget icons
+icondir = themedir .. "/icons/red-transparent/"
+theme.widget_cpuicon = icondir .. "/cpu.png"
+theme.widget_memicon = icondir .. "/mem.png"
+theme.widget_dishicon = icondir .. "/dish.png"
+theme.widget_baticon = icondir .. "/bat.png"
+theme.widget_spkricon = icondir .. "/spkr.png"
+theme.widget_tempicon = icondir .. "/temp.png"
 
 return theme
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80
