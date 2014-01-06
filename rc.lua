@@ -74,11 +74,41 @@ local layouts =
 -- }}}
 
 -- {{{ Wallpaper
-if beautiful.wallpaper then
+function scanDir(directory)
+    local fileList, popen = {}, io.popen
+    for filename in popen([[find "]] ..directory.. [[" -type f]]):lines() do
+        fileList[#fileList+1] = filename
+    end
+    return fileList
+end
+
+function random_wallpaper()
+    wp_path = os.getenv("HOME") .. "/Dropbox/0-Dokumente/wallpaper/desktop/"
+    wp_list = scanDir(wp_path)
     for s = 1, screen.count() do
-        gears.wallpaper.maximized(beautiful.wallpaper, s, false)
+        gears.wallpaper.fill(wp_list[math.random(1, #wp_list)], s)
     end
 end
+-- inital setting of random wallpapers
+random_wallpaper()
+
+-- setup the timer
+wp_timeout = 30*60
+wp_timer = timer { timeout = wp_timeout }
+wp_timer:connect_signal("timeout",
+    function()
+        -- stop the timer (we don't need multiple instances running at the same time)
+        wp_timer:stop()
+
+        -- randomize wallpaper
+        random_wallpaper()
+
+        --restart the timer
+        wp_timer.timeout = wp_timeout
+        wp_timer:start()
+end)
+-- initial start when rc.lua is first run
+wp_timer:start()
 -- }}}
 
 -- {{{ Tags
@@ -137,9 +167,11 @@ cpuwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 0,10 },
 
 local cpuwidget_tooltip = awful.tooltip({ objects = { cpuicon, cpuwidget } })
 -- register vicious action
-vicious.register(cpuwidget, vicious.widgets.cpu, 
+vicious.register(cpuwidget, vicious.widgets.cpu,
     function (widget, args)
-        cpuwidget_tooltip:set_text("CPU Usage: " .. args[1] .. "%")
+        if cpuwidget_tooltip.visible then
+            cpuwidget_tooltip:set_text("CPU Usage: " .. args[1] .. "%")
+        end
         return args[1]
 end)
 -- }}} CPU widget
@@ -168,24 +200,26 @@ vicious.register(neticon, vicious.widgets.net,
         netwidget:add_value(up, 1)
         netwidget:add_value(down, 2)
         -- Format the string representation
-        local format = function(val)
-            if val > 900000 then
-                return string.format("%.1f MiB", val/1048576.)
-            elseif val > 900 then
-                return string.format("%.1f KiB", val/1024.)
+        if netwidget_tooltip.visible then
+            local format = function(val)
+                if val > 900000 then
+                    return string.format("%.1f MiB", val/1048576.)
+                elseif val > 900 then
+                    return string.format("%.1f KiB", val/1024.)
+                end
+                return string.format("%d B", val)
             end
-            return string.format("%d B", val)
+            local ft = function (color) return '<span font="Terminus 8" color="' .. color .. '">' end
+            netwidget_tooltip:set_text(
+                string.format(
+                    ft(beautiful.fg_widget_netup) .. 'Up</span>' ..
+                        ft(beautiful.fg_widget_netlabel) .. '/</span>' ..
+                        ft(beautiful.fg_widget_netdn) .. 'Down</span>' ..
+                        ft(beautiful.fg_widget_netlabel) .. ':</span> ' ..
+                        ft(beautiful.fg_widget_netup) .. '%08s</span>' ..
+                        ft(beautiful.fg_widget_netlabel) .. '/</span>' ..
+                        ft(beautiful.fg_widget_netdn) .. '%08s</span>', format(up), format(down)))
         end
-        local ft = function (color) return '<span font="Terminus 8" color="' .. color .. '">' end
-        netwidget_tooltip:set_text(
-            string.format(
-                ft(beautiful.fg_widget_netup) .. 'Up</span>' ..
-                    ft(beautiful.fg_widget_netlabel) .. '/</span>' ..
-                    ft(beautiful.fg_widget_netdn) .. 'Down</span>' ..
-                    ft(beautiful.fg_widget_netlabel) .. ':</span> ' ..
-                    ft(beautiful.fg_widget_netup) .. '%08s</span>' ..
-                    ft(beautiful.fg_widget_netlabel) .. '/</span>' ..
-                    ft(beautiful.fg_widget_netdn) .. '%08s</span>', format(up), format(down)))
 end)
 -- }}} Network widget
 
@@ -286,13 +320,12 @@ for s = 1, screen.count() do
     local left_layout = wibox.layout.fixed.horizontal()
     left_layout:add(mylauncher)
     left_layout:add(mytaglist[s])
-    left_layout:add(mylayoutbox[s])
     left_layout:add(mypromptbox[s])
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
+    right_layout:add(mylayoutbox[s])
     if s == screen.count() then
-        right_layout:add(separator)
         right_layout:add(cpuicon)
         right_layout:add(cpuwidget)
         right_layout:add(separator)
@@ -379,8 +412,10 @@ globalkeys = awful.util.table.join(
         end),
 
     -- Standard program
-    awful.key({ modkey, "Control" }, "r", awesome.restart),
-    awful.key({ modkey, "Control" }, "e", awesome.quit),
+    awful.key({ modkey, "Control" }, "r",     awesome.restart),
+    awful.key({ modkey, "Control" }, "e",     awesome.quit),
+
+    awful.key({ modkey, "Control" }, "w",     random_wallpaper),
 
     awful.key({ modkey,           }, "-",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "=",     function () awful.tag.incmwfact(-0.05)    end),
@@ -525,6 +560,7 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c, startup)
+
     -- Enable sloppy focus
     c:connect_signal("mouse::enter", function(c)
         if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
