@@ -85,6 +85,7 @@ end
 function random_wallpaper()
     wp_path = os.getenv("HOME") .. "/Dropbox/0-Dokumente/wallpaper/desktop/"
     wp_list = scanDir(wp_path)
+    if #wp_list == 0 then return end
     for s = 1, screen.count() do
         gears.wallpaper.fill(wp_list[math.random(1, #wp_list)], s)
     end
@@ -237,11 +238,24 @@ volwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 0,10 },
 vicious.cache(vicious.widgets.volume)
 -- register vicious action
 vicious.register(volwidget, vicious.widgets.volume, "$1", 2, "PCM")
+-- functions, also for Fn-keys
+function volumeRaise()
+    awful.util.spawn("amixer -q set PCM 2dB+ unmute", false)
+    vicious.force({volwidget})
+end
+function volumeLower()
+    awful.util.spawn("amixer -q set PCM 2dB-", false)
+    vicious.force({volwidget})
+end
+function volumeToggleMute()
+    awful.util.spawn("amixer -q set PCM toggle", false)
+    vicious.force({volwidget})
+end
 -- Register buttons
 volicon:buttons(awful.util.table.join(
     awful.button({ }, 1, function () awful.util.spawn("xfce4-mixer") end),
-    awful.button({ }, 4, function () awful.util.spawn("amixer -q set PCM 2dB+", false) vicious.force({volwidget}) end),
-    awful.button({ }, 5, function () awful.util.spawn("amixer -q set PCM 2dB-", false) vicious.force({volwidget}) end)
+    awful.button({ }, 4, volumeRaise),
+    awful.button({ }, 5, volumeLower)
 ))
 -- Register assigned buttons
 volwidget:buttons(volicon:buttons())
@@ -350,12 +364,13 @@ end
 -- }}}
 
 -- {{{ Mouse bindings
-root.buttons(awful.util.table.join(
+rootbuttons = awful.util.table.join(
     awful.button({ }, 1, function () mymainmenu:hide() end),
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
-))
+    awful.button({ }, 3, function () mymainmenu:toggle() end)
+    -- Mouse wheel up/down on root window
+    --awful.button({ }, 4, awful.tag.viewnext),
+    --awful.button({ }, 5, awful.tag.viewprev)
+)
 -- }}}
 
 -- {{{ Key bindings
@@ -363,6 +378,7 @@ globalkeys = awful.util.table.join(
     -- Switch between tags on same screen
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext),
+
     -- Switch back to last tag
     --awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
 
@@ -456,10 +472,33 @@ globalkeys = awful.util.table.join(
     awful.key({ "Control", altkey }, "Delete", function () awful.util.spawn("xscreensaver-command -lock") end),
     awful.key({ modkey },            "l",     function () awful.util.spawn("xscreensaver-command -lock") end),
 
+    -- Hibernate
+    awful.key({ modkey },            "h",
+              function ()
+                  awful.util.spawn("xscreensaver-command -lock")
+                  awful.util.spawn("sudo /usr/sbin/pm-hibernate")
+              end),
+
     -- Keybindings for quickly making screenshots
-    awful.key({ },                   "Print", function () exec("bash -c \"xwd -root | convert - ~/screenshot-$(date +%s).png\"") end),
-    awful.key({ "Shift" },           "Print", function () exec("bash -c \"xwd -frame | convert - ~/screenshot-$(date +%s).png\"") end),
-    awful.key({ "Control" },         "Print", function () exec("bash -c \"xwd | convert - ~/screenshot-$(date +%s).png\"") end)
+    awful.key({ },                   "Print", function () awful.util.spawn("bash -c \"xwd -root | convert - ~/screenshot-$(date +%s).png\"") end),
+    awful.key({ "Shift" },           "Print", function () awful.util.spawn("bash -c \"xwd -frame | convert - ~/screenshot-$(date +%s).png\"") end),
+    awful.key({ "Control" },         "Print", function () awful.util.spawn("bash -c \"xwd | convert - ~/screenshot-$(date +%s).png\"") end),
+
+    -- Keybindings for Notebook Fn-Keys
+    awful.key({ }, "XF86AudioMute",           volumeToggleMute),
+    awful.key({ }, "XF86AudioRaiseVolume",    volumeRaise),
+    awful.key({ }, "XF86AudioLowerVolume",    volumeLower),
+    awful.key({ }, "XF86MonBrightnessUp",     function () awful.util.spawn("xbacklight -inc 15") end),
+    awful.key({ }, "XF86MonBrightnessDown",   function () awful.util.spawn("xbacklight -dec 15") end)
+
+)
+
+globalbuttons = awful.util.table.join(
+    -- Switch between tags on same screen
+    awful.button({ modkey         }, 4,        awful.tag.viewnext),
+    awful.button({ modkey         }, 5,        awful.tag.viewprev),
+    awful.button({ modkey         }, 7,        awful.tag.viewnext),
+    awful.button({ modkey         }, 6,        awful.tag.viewprev)
 )
 
 clientkeys = awful.util.table.join(
@@ -526,11 +565,14 @@ end
 clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise(); mymainmenu:hide() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
-    awful.button({ modkey }, 3, awful.mouse.client.resize)
+    awful.button({ modkey }, 3, awful.mouse.client.resize),
+    -- Super, Shift + Touchscreen -> resize
+    awful.button({ modkey, "Shift" }, 1, awful.mouse.client.resize)
 )
 
 -- Set keys
 root.keys(globalkeys)
+root.buttons(rootbuttons)
 -- }}}
 
 -- {{{ Rules
