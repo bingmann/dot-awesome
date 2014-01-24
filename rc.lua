@@ -175,6 +175,17 @@ vicious.register(cpuwidget, vicious.widgets.cpu,
         end
         return args[1]
 end)
+-- initialize frequency text
+local cpufreq = wibox.widget.textbox()
+vicious.register(cpufreq, vicious.widgets.cpufreq,
+                 function (widget, args)
+                     return "<span color='#e00000'>" .. string.format("%.1f", args[2]) .. " GHz</span>"
+                 end, 2, "cpu0")
+vicious.cache(vicious.widgets.cpufreq)
+-- initialize temperature text
+local cputemp = wibox.widget.textbox()
+vicious.register(cputemp, vicious.widgets.thermal, "<span color='#e00000'>$1&#176;C</span>", 5, { "coretemp.0", "core" })
+vicious.cache(vicious.widgets.thermal)
 -- }}} CPU widget
 
 -- {{{ Network widget
@@ -223,6 +234,21 @@ vicious.register(neticon, vicious.widgets.net,
         end
 end)
 -- }}} Network widget
+
+-- {{{ Battery widget
+local baticon = wibox.widget.imagebox(beautiful.widget_baticon)
+-- initialize battery text
+local battext = wibox.widget.textbox()
+local bat_tooltip = awful.tooltip({ objects = { baticon, battext } })
+function process_battext(widget, args)
+    --if bat_tooltip.visible then
+        bat_tooltip:set_text("Time remaining: " .. args[3] .. ", wear " .. args[4])
+    --end
+    return "<span color='#e00000'>" .. args[1] .. args[2] .. "%</span>"
+end
+vicious.register(battext, vicious.widgets.bat, process_battext, 10, "BAT1")
+vicious.cache(vicious.widgets.bat)
+-- }}} Battery widget
 
 -- {{{ Volume widget
 local volicon = wibox.widget.imagebox(beautiful.widget_spkricon)
@@ -343,8 +369,15 @@ for s = 1, screen.count() do
         right_layout:add(cpuicon)
         right_layout:add(cpuwidget)
         right_layout:add(separator)
+        right_layout:add(cpufreq)
+        right_layout:add(separator)
+        right_layout:add(cputemp)
+        right_layout:add(separator)
         right_layout:add(neticon)
         right_layout:add(netwidget)
+        right_layout:add(separator)
+        right_layout:add(baticon)
+        right_layout:add(battext)
         right_layout:add(separator)
         right_layout:add(volicon)
         right_layout:add(volwidget)
@@ -488,8 +521,8 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioMute",           volumeToggleMute),
     awful.key({ }, "XF86AudioRaiseVolume",    volumeRaise),
     awful.key({ }, "XF86AudioLowerVolume",    volumeLower),
-    awful.key({ }, "XF86MonBrightnessUp",     function () awful.util.spawn("xbacklight -inc 15") end),
-    awful.key({ }, "XF86MonBrightnessDown",   function () awful.util.spawn("xbacklight -dec 15") end)
+    awful.key({ }, "XF86MonBrightnessUp",     function () awful.util.spawn("xbacklight -inc 15 -time 0") end),
+    awful.key({ }, "XF86MonBrightnessDown",   function () awful.util.spawn("xbacklight -dec 15 -time 0") end)
 
 )
 
