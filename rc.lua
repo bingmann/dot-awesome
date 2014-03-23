@@ -99,14 +99,14 @@ wp_timer = timer { timeout = wp_timeout }
 wp_timer:connect_signal("timeout",
     function()
         -- stop the timer (we don't need multiple instances running at the same time)
-        wp_timer:stop()
+        --wp_timer:stop()
 
         -- randomize wallpaper
         random_wallpaper()
 
         --restart the timer
-        wp_timer.timeout = wp_timeout
-        wp_timer:start()
+        --wp_timer.timeout = wp_timeout
+        --wp_timer:start()
 end)
 -- initial start when rc.lua is first run
 wp_timer:start()
@@ -175,12 +175,31 @@ vicious.register(cpuwidget, vicious.widgets.cpu,
         end
         return args[1]
 end)
+-- initialize frequency change menu
+mycpufreqmenu = awful.menu(
+    {
+        theme = { width = 160 },
+        items = {
+            { "ondemand 2.4 GHz", "sudo /usr/bin/cpupower frequency-set -g ondemand --min 800000 --max 2400000" },
+            { "ondemand 1.4 GHz", "sudo /usr/bin/cpupower frequency-set -g ondemand --min 800000 --max 1400000" },
+            { "conservative 2.4 GHz", "sudo /usr/bin/cpupower frequency-set -g conservative --min 800000 --max 2400000" },
+            { "conservative 1.4 GHz", "sudo /usr/bin/cpupower frequency-set -g conservative --min 800000 --max 1400000" },
+            { "const 1.4 GHz", "sudo /usr/bin/cpupower frequency-set -g ondemand --min 1400000 --max 1400000" },
+            { "powersave 0.8 GHz", "sudo /usr/bin/cpupower frequency-set -g powersave --min 800000 --max 800000" }
+        }
+})
+
 -- initialize frequency text
 local cpufreq = wibox.widget.textbox()
 vicious.register(cpufreq, vicious.widgets.cpufreq,
                  function (widget, args)
                      return "<span color='#e00000'>" .. string.format("%.1f", args[2]) .. " GHz</span>"
                  end, 2, "cpu0")
+
+cpufreq:buttons(awful.util.table.join(
+                    awful.button({ }, 1, function () mycpufreqmenu:toggle() end)
+))
+
 vicious.cache(vicious.widgets.cpufreq)
 -- initialize temperature text
 local cputemp = wibox.widget.textbox()
@@ -344,9 +363,10 @@ for s = 1, screen.count() do
     mylayoutbox[s] = awful.widget.layoutbox(s)
     mylayoutbox[s]:buttons(awful.util.table.join(
                            awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
-                           awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
-                           awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
+                           awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end)
+                           --awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
+                           --awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)
+                          ))
     -- Create a taglist widget
     mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
@@ -358,7 +378,7 @@ for s = 1, screen.count() do
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
-    left_layout:add(mylauncher)
+    --left_layout:add(mylauncher)
     left_layout:add(mytaglist[s])
     left_layout:add(mypromptbox[s])
 
@@ -398,7 +418,7 @@ end
 
 -- {{{ Mouse bindings
 rootbuttons = awful.util.table.join(
-    awful.button({ }, 1, function () mymainmenu:hide() end),
+    awful.button({ }, 1, function () mymainmenu:hide(); mycpufreqmenu:hide() end),
     awful.button({ }, 3, function () mymainmenu:toggle() end)
     -- Mouse wheel up/down on root window
     --awful.button({ }, 4, awful.tag.viewnext),
@@ -451,14 +471,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "Down", function () awful.screen.focus_relative( 1) end),
     awful.key({ modkey, "Control" }, "Up",   function () awful.screen.focus_relative(-1) end),
 
-    awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
-    awful.key({ modkey,           }, "Tab",
-        function ()
-            awful.client.focus.history.previous()
-            if client.focus then
-                client.focus:raise()
-            end
-        end),
+    awful.key({ modkey,           }, "u",    awful.client.urgent.jumpto),
+    awful.key({ modkey,           }, "Tab",  function () awful.screen.focus_relative( 1) end),
 
     -- Standard program
     awful.key({ modkey, "Control" }, "r",     awesome.restart),
@@ -503,7 +517,31 @@ globalkeys = awful.util.table.join(
 
     -- Screensaver Super-l or Ctrl+Alt+Del
     awful.key({ "Control", altkey }, "Delete", function () awful.util.spawn("xscreensaver-command -lock") end),
-    awful.key({ modkey },            "l",     function () awful.util.spawn("xscreensaver-command -lock") end),
+    awful.key({ modkey },            "l",      function () awful.util.spawn("xscreensaver-command -lock") end),
+    awful.key({ modkey, "Shift" },   "l",
+              function ()
+                  -- disable screensaver
+                  awful.util.spawn("xset s 7200 dpms 7200 7200 7200 -dpms")
+                  naughty.notify({ text = "screensaver disabled for 90 minutes" })
+
+                  -- set up timer
+                  ss_timer = timer{ timeout = 60 }
+                  ss_countdown = 90
+                  ss_timer:connect_signal("timeout",
+                                          function()
+                                              ss_countdown = ss_countdown - 1
+                                              if ss_countdown == 0 then
+                                                  -- enable screensaver
+                                                  awful.util.spawn("xset s on s 300 360 +dpms dpms 4er20 600 600")
+                                                  naughty.notify({ text = "screensaver enabled" })
+                                                  ss_timer:stop()
+                                              else
+                                                  -- touch xscreensaver idle time
+                                                  awful.util.spawn("xscreensaver-command --deactivate")
+                                              end
+                  end)
+                  ss_timer:start()
+    end),
 
     -- Hibernate
     awful.key({ modkey },            "h",
@@ -511,6 +549,23 @@ globalkeys = awful.util.table.join(
                   awful.util.spawn("xscreensaver-command -lock")
                   awful.util.spawn("sudo /usr/sbin/pm-hibernate")
               end),
+
+    -- Hibernate Control on ACPI lid close
+    awful.key({ modkey, "Shift" },   "h",
+              function ()
+                  -- disable screensaver
+                  awful.util.spawn("touch /tmp/hibernation.lock")
+                  naughty.notify({ text = "automatic hibernation disabled for 60 minutes" })
+
+                  -- set up timer
+                  hib_timer = timer{ timeout = 60*60 }
+                  hib_timer:connect_signal("timeout",
+                                           function()
+                                               awful.util.spawn("rm -f /tmp/hibernation.lock")
+                                               naughty.notify({ text = "automatic hibernation renabled" })
+                  end)
+                  hib_timer:start()
+    end),
 
     -- Keybindings for quickly making screenshots
     awful.key({ },                   "Print", function () awful.util.spawn("bash -c \"xwd -root | convert - ~/screenshot-$(date +%s).png\"") end),
@@ -521,9 +576,15 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioMute",           volumeToggleMute),
     awful.key({ }, "XF86AudioRaiseVolume",    volumeRaise),
     awful.key({ }, "XF86AudioLowerVolume",    volumeLower),
-    awful.key({ }, "XF86MonBrightnessUp",     function () awful.util.spawn("xbacklight -inc 15 -time 0") end),
-    awful.key({ }, "XF86MonBrightnessDown",   function () awful.util.spawn("xbacklight -dec 15 -time 0") end)
+    awful.key({ }, "XF86MonBrightnessUp",     function () awful.util.spawn("/usr/bin/xbacklight -inc 15 -time 0") end),
+    awful.key({ }, "XF86MonBrightnessDown",   function () awful.util.spawn("/usr/bin/xbacklight -dec 15 -time 0") end),
+    awful.key({ }, "XF86Display",             function () awful.util.spawn("/usr/bin/autorandr --change") end),
 
+    awful.key({ }, "XF86Launch1",             function () awful.util.spawn("/usr/bin/arandr") end),
+    awful.key({ }, "XF86Launch3",             function () awful.util.spawn("sudo /root/samctl.sh perf") end),
+    awful.key({ }, "XF86KbdBrightnessUp",     function () awful.util.spawn("sudo /root/samctl.sh kbdled inc") end),
+    awful.key({ }, "XF86KbdBrightnessDown",   function () awful.util.spawn("sudo /root/samctl.sh kbdled dec") end),
+    awful.key({ }, "XF86WLAN",                function () awful.util.spawn("sudo /root/samctl.sh wlan") end)
 )
 
 globalbuttons = awful.util.table.join(
@@ -596,7 +657,7 @@ for i = 1, 10 do
 end
 
 clientbuttons = awful.util.table.join(
-    awful.button({ }, 1, function (c) client.focus = c; c:raise(); mymainmenu:hide() end),
+    awful.button({ }, 1, function (c) client.focus = c; c:raise(); mymainmenu:hide(); mycpufreqmenu:hide() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
     awful.button({ modkey }, 3, awful.mouse.client.resize),
     -- Super, Shift + Touchscreen -> resize
