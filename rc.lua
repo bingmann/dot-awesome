@@ -171,7 +171,7 @@ local cpuwidget_tooltip = awful.tooltip({ objects = { cpuicon, cpuwidget } })
 vicious.register(cpuwidget, vicious.widgets.cpu,
     function (widget, args)
         if cpuwidget_tooltip.visible then
-            cpuwidget_tooltip:set_text("CPU Usage: " .. args[1] .. "%")
+            cpuwidget_tooltip:set_markup("CPU Usage: " .. args[1] .. "%")
         end
         return args[1]
 end)
@@ -241,7 +241,7 @@ vicious.register(neticon, vicious.widgets.net,
                 return string.format("%d B", val)
             end
             local ft = function (color) return '<span font="Terminus 8" color="' .. color .. '">' end
-            netwidget_tooltip:set_text(
+            netwidget_tooltip:set_markup(
                 string.format(
                     ft(beautiful.fg_widget_netup) .. 'Up</span>' ..
                         ft(beautiful.fg_widget_netlabel) .. '/</span>' ..
@@ -261,7 +261,7 @@ local battext = wibox.widget.textbox()
 local bat_tooltip = awful.tooltip({ objects = { baticon, battext } })
 function process_battext(widget, args)
     --if bat_tooltip.visible then
-        bat_tooltip:set_text("Time remaining: " .. args[3] .. ", wear " .. args[4])
+        bat_tooltip:set_markup("Time remaining: " .. args[3] .. ", wear " .. args[4])
     --end
     return "<span color='#e00000'>" .. args[1] .. args[2] .. "%</span>"
 end
