@@ -525,14 +525,14 @@ globalkeys = awful.util.table.join(
                   naughty.notify({ text = "screensaver disabled for 90 minutes" })
 
                   -- set up timer
-                  ss_timer = timer{ timeout = 60 }
-                  ss_countdown = 90
+                  ss_timer = timer{ timeout = 30 }
+                  ss_countdown = 90*2
                   ss_timer:connect_signal("timeout",
                                           function()
                                               ss_countdown = ss_countdown - 1
                                               if ss_countdown == 0 then
                                                   -- enable screensaver
-                                                  awful.util.spawn("xset s on s 300 360 +dpms dpms 4er20 600 600")
+                                                  awful.util.spawn("xset s on s 300 360 +dpms dpms 420 600 600")
                                                   naughty.notify({ text = "screensaver enabled" })
                                                   ss_timer:stop()
                                               else
