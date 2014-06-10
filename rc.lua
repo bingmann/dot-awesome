@@ -518,6 +518,7 @@ globalkeys = awful.util.table.join(
     -- Screensaver Super-l or Ctrl+Alt+Del
     awful.key({ "Control", altkey }, "Delete", function () awful.util.spawn("xscreensaver-command -lock") end),
     awful.key({ modkey },            "l",      function () awful.util.spawn("xscreensaver-command -lock") end),
+    awful.key({ },                   "Pause",  function () awful.util.spawn("xscreensaver-command -lock") end),
     awful.key({ modkey, "Shift" },   "l",
               function ()
                   -- disable screensaver
@@ -578,7 +579,7 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioLowerVolume",    volumeLower),
     awful.key({ }, "XF86MonBrightnessUp",     function () awful.util.spawn("/usr/bin/xbacklight -inc 15 -time 0") end),
     awful.key({ }, "XF86MonBrightnessDown",   function () awful.util.spawn("/usr/bin/xbacklight -dec 15 -time 0") end),
-    awful.key({ }, "XF86Display",             function () awful.util.spawn("/usr/bin/autorandr --change") end),
+    awful.key({ }, "XF86Display",             function () awful.util.spawn("/usr/bin/autorandr -c") end),
 
     awful.key({ }, "XF86Launch1",             function () awful.util.spawn("/usr/bin/arandr") end),
     awful.key({ }, "XF86Launch3",             function () awful.util.spawn("sudo /root/samctl.sh perf") end),
