@@ -516,7 +516,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift" },   "k",     function () awful.util.spawn("xkill") end),
 
     -- Screensaver Super-l or Ctrl+Alt+Del
-    awful.key({ "Control", altkey }, "Delete", function () awful.util.spawn("xscreensaver-command -lock") end),
+    --awful.key({ "Control", altkey }, "Delete", function () awful.util.spawn("xscreensaver-command -lock") end),
     awful.key({ modkey },            "l",      function () awful.util.spawn("xscreensaver-command -lock") end),
     awful.key({ },                   "Pause",  function () awful.util.spawn("xscreensaver-command -lock") end),
     awful.key({ modkey, "Shift" },   "l",
