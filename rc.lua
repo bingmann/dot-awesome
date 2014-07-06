@@ -507,6 +507,7 @@ globalkeys = awful.util.table.join(
 
     -- Program Launchers
     awful.key({ modkey },            "Return", function () awful.util.spawn(terminal) end),
+    awful.key({ modkey },            "\\",     function () awful.util.spawn("gnome-terminal") end),
     awful.key({ modkey },            "w",     function () awful.util.spawn("firefox") end),
     awful.key({ modkey },            "f",     function () awful.util.spawn("thunar") end),
     awful.key({ modkey },            "e",     function () awful.util.spawn("emacsclient -nc --alternate-editor emacs ~/Dropbox/0-Work/TODO.org") end),
