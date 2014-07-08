@@ -83,7 +83,7 @@ function scanDir(directory)
 end
 
 function random_wallpaper()
-    wp_path = os.getenv("HOME") .. "/sync/0-Dokumente/wallpaper/desktop/"
+    wp_path = os.getenv("HOME") .. "/Dropbox/0-Dokumente/wallpaper/desktop/"
     wp_list = scanDir(wp_path)
     if #wp_list == 0 then return end
     for s = 1, screen.count() do
@@ -510,7 +510,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey },            "\\",     function () awful.util.spawn("gnome-terminal") end),
     awful.key({ modkey },            "w",     function () awful.util.spawn("firefox") end),
     awful.key({ modkey },            "f",     function () awful.util.spawn("thunar") end),
-    awful.key({ modkey },            "e",     function () awful.util.spawn("emacsclient -nc --alternate-editor emacs ~/sync/0-Work/TODO.org") end),
+    awful.key({ modkey },            "e",     function () awful.util.spawn("emacsclient -nc --alternate-editor emacs ~/Dropbox/0-Work/TODO.org") end),
 
     awful.key({ altkey, "Control", "Shift" }, "Return", function () awful.util.spawn(terminal) end), -- alternative terminal hotkey
 
