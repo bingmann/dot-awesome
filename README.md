@@ -7,6 +7,12 @@ The default config of awesome is neither pretty, nor efficient and intuitive. My
 
 In the following I will try to give a summary of the most common keys and gestures, the list is not complete. Please refer to the config itself for more window manipulation keys.
 
+The config requires awesome-3.5, I currently have 3.5.4, and the "vicious" library. Clone vicious as a git submodule using
+```
+git submodue init
+git submodule update
+```
+
 ## Most Important Key Strokes
 
 Most keys require the "Super" modifier, which is usually the Windows key (see FAQ on how to change CapsLock to Super).
@@ -62,6 +68,7 @@ Super-a                       | Moves focused window to next monitor/screen.
 Super-Shift-[1234567890]      | Moves focused windows to other virtual desktop (beware of the mouse follow focus!)
 Super-z                       | Floats/Unfloats the focused window,
 Super-p                       | Pins the focused window so that it is always on top of all others.
+Super-h                       | Run sudo /usr/sbin/pm-hiberate to hiberate system.
 Super-Shift-l                 | Disable screensaver for 90 minutes (think presentation).
 Super-Shift-k                 | Launch "xkill" program to **really, really kill** a frozen window/application.
 Printscreen                   | Make a **screenshot** (duh) using "xwd", saved as a PNG in the homedir.
@@ -83,3 +90,8 @@ Why is the focus color **red**?
 What is the wallpaper?
  - The config choses a random wallpaper from the config directory, you can add your own.
  - The two example wallpapers are photos I made.
+
+What about the system indicators on the top right?
+ - These are the indicators from the vicious library, that I got running.
+ - Mouse wheel on the volume changes the default mixer's sound volume.
+ - Click on the CPU frequency gives a list of cpupower configs I found useful.
