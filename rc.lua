@@ -83,7 +83,8 @@ function scanDir(directory)
 end
 
 function random_wallpaper()
-    wp_path = os.getenv("HOME") .. "/Dropbox/0-Dokumente/wallpaper/desktop/"
+    --wp_path = os.getenv("HOME") .. "/Dropbox/0-Dokumente/wallpaper/desktop/"
+    wp_path = os.getenv("HOME") .. "/.config/awesome/wallpaper/"
     wp_list = scanDir(wp_path)
     if #wp_list == 0 then return end
     for s = 1, screen.count() do
