@@ -14,6 +14,7 @@ Most keys require the "Super" modifier, which is usually the Windows key (see FA
 Key                 | Action
 ------------------- | ------------------------------------------------------
 Super-Enter         | starts default **terminal** (urxvt)
+Ctrl+Alt+Shift Enter | also starts the default terminal (backup, in case Super doesn't work)
 Super-\ (Backslash) | start gnome-terminal
 Super-Left/Right    | switch virtual desktop left/right
 Super-Up/Down       | switch focus to window above/below on current desktop
