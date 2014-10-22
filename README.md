@@ -13,6 +13,8 @@ git submodue init
 git submodule update
 ```
 
+![Screenshot](screenshot.jpg?raw=true)
+
 ## Most Important Key Strokes
 
 Most keys require the "Super" modifier, which is usually the Windows key (see FAQ on how to change CapsLock to Super).
@@ -36,7 +38,7 @@ Break/Pause or Super-l | **Lock** screen using screensaver (xscreensaver)
 Super-Ctrl-e       | **Exit** Awesome
 Super-Ctrl-r       | **Reload** Awesome config
 Super-Ctrl-w       | Switch to new random **wallpaper** (see FAQ)
- 
+
 The config contains the above programs as default applications. If you want others, change the config.
 
 ## Common Mouse Gestures
@@ -55,9 +57,9 @@ LeftClick number        | Switch virtual desktop.
 RightClick number       | Show both, current and clicked, virtual desktop at once.
 Shift+LeftClick number  | Moves the focused window to the virtual desktop.
 Shift+RightClick number | Copies/Removes the focused window to the virtual desktop (it is shown on both).
- 
+
 ## More Advanced Key Strokes
-  
+
 Key                           | Action
 ----------------------------- | ------------------------------------------------------
 Super-Space                   | Switches layouts, I removed all but the most useful.
@@ -81,7 +83,7 @@ I have no windows key! or: How to use CapsLock for something useful!
  - Well, neither does some of my older keyboards
  - run "setxkmap -option caps:super" makes CapsLock another Super key.
  - Please google how to make this permanent.
- 
+
 Why is the focus color **red**?
  - because red+black is a cool color combination.
  - because red is the color of attention.
