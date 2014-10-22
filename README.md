@@ -5,6 +5,8 @@ This repository contains my config for the AwesomeWM tiling window manager.
 
 The default config of awesome is neither pretty, nor efficient and intuitive. My attempts to amend these drawbacks were somewhat successful, but there is still room for improvement. This config is therefore public to help others to start working with AwesomeWM.
 
+Maybe the most important design criterion of this config is **efficiency**. I favor speed, a clean workspace and few keystrokes to launch the most important applications. There is little eye candy and no display bar with a zillion system properties.
+
 In the following I will try to give a summary of the most common keys and gestures, the list is not complete. Please refer to the config itself for more window manipulation keys.
 
 The config requires awesome-3.5, I currently have 3.5.4, and the "vicious" library. Clone vicious as a git submodule using
