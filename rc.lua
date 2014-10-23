@@ -553,6 +553,13 @@ globalkeys = awful.util.table.join(
                   awful.util.spawn("sudo /usr/sbin/pm-hibernate")
               end),
 
+   -- Hibernate
+    awful.key({ modkey },            "y",
+              function ()
+                  awful.util.spawn("xscreensaver-command -lock")
+                  awful.util.spawn("sudo /usr/sbin/pm-suspend")
+              end),
+
     -- Hibernate Control on ACPI lid close
     awful.key({ modkey, "Shift" },   "h",
               function ()
