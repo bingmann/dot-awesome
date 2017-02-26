@@ -13,6 +13,9 @@ local menubar = require("menubar")
 -- Vicious monitoring library
 local vicious = require("vicious")
 
+-- startup (on each reconfig)
+awful.util.spawn_with_shell("xautolock -time 10 -locker 'xtrlock -b' -notify 300 -notifier 'xset dpms force standby' -corners '++++' -cornersize 16 -cornerdelay 7200")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -508,19 +511,20 @@ globalkeys = awful.util.table.join(
 
     -- Program Launchers
     awful.key({ modkey },            "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ modkey },            "\\",     function () awful.util.spawn("gnome-terminal") end),
+    awful.key({ modkey },            "\\",     function () awful.util.spawn("mate-terminal") end),
     awful.key({ modkey },            "w",     function () awful.util.spawn("firefox") end),
-    awful.key({ modkey },            "f",     function () awful.util.spawn("thunar") end),
+    awful.key({ modkey },            "f",     function () awful.util.spawn("pcmanfm") end),
     awful.key({ modkey },            "e",     function () awful.util.spawn("emacsclient -nc --alternate-editor emacs ~/synca/01-OrgTassen/TODO.org") end),
 
     awful.key({ altkey, "Control", "Shift" }, "Return", function () awful.util.spawn(terminal) end), -- alternative terminal hotkey
 
+    awful.key({ modkey, "Shift" },   "a",     function () awful.util.spawn("autorandr -c") end),
     awful.key({ modkey, "Shift" },   "k",     function () awful.util.spawn("xkill") end),
 
     -- Screensaver Super-l or Ctrl+Alt+Del
-    --awful.key({ "Control", altkey }, "Delete", function () awful.util.spawn("xscreensaver-command -lock") end),
-    awful.key({ modkey },            "l",      function () awful.util.spawn("xscreensaver-command -lock") end),
-    awful.key({ },                   "Pause",  function () awful.util.spawn("xscreensaver-command -lock") end),
+    --awful.key({ "Control", altkey }, "Delete", function () awful.util.spawn("xautolock -locknow") end),
+    awful.key({ modkey },            "l",      function () awful.util.spawn("xautolock -locknow") end),
+    awful.key({ },                   "Pause",  function () awful.util.spawn("xautolock -locknow") end),
     awful.key({ modkey, "Shift" },   "l",
               function ()
                   -- disable screensaver
@@ -540,7 +544,7 @@ globalkeys = awful.util.table.join(
                                                   ss_timer:stop()
                                               else
                                                   -- touch xscreensaver idle time
-                                                  awful.util.spawn("xscreensaver-command --deactivate")
+                                                  awful.util.spawn("xautolock -disable")
                                               end
                   end)
                   ss_timer:start()
@@ -549,14 +553,21 @@ globalkeys = awful.util.table.join(
     -- Hibernate
     awful.key({ modkey },            "h",
               function ()
-                  awful.util.spawn("xscreensaver-command -lock")
+                  awful.util.spawn("xautolock -locknow")
                   awful.util.spawn("sudo /usr/sbin/pm-hibernate")
               end),
 
-   -- Hibernate
+    -- Suspend
     awful.key({ modkey },            "y",
               function ()
-                  awful.util.spawn("xscreensaver-command -lock")
+                  awful.util.spawn("xautolock -locknow")
+                  awful.util.spawn("sudo /usr/sbin/pm-suspend")
+              end),
+
+    -- Suspend
+    awful.key({ "Control" },         "Pause",
+              function ()
+                  awful.util.spawn("xautolock -locknow")
                   awful.util.spawn("sudo /usr/sbin/pm-suspend")
               end),
 
@@ -578,9 +589,9 @@ globalkeys = awful.util.table.join(
     end),
 
     -- Keybindings for quickly making screenshots
-    awful.key({ },                   "Print", function () awful.util.spawn("bash -c \"xwd -root | convert - ~/screenshot-$(date +%s).png\"") end),
-    awful.key({ "Shift" },           "Print", function () awful.util.spawn("bash -c \"xwd -frame | convert - ~/screenshot-$(date +%s).png\"") end),
-    awful.key({ "Control" },         "Print", function () awful.util.spawn("bash -c \"xwd | convert - ~/screenshot-$(date +%s).png\"") end),
+    awful.key({ },                   "Print", function () awful.util.spawn("bash -c \"xwd -root | convert xwd:- ~/screenshot-$(date +%s).png\"") end),
+    awful.key({ "Shift" },           "Print", function () awful.util.spawn("bash -c \"xwd -frame | convert xwd:- ~/screenshot-$(date +%s).png\"") end),
+    awful.key({ "Control" },         "Print", function () awful.util.spawn("bash -c \"xwd | convert xwd:- ~/screenshot-$(date +%s).png\"") end),
 
     -- Keybindings for Notebook Fn-Keys
     awful.key({ }, "XF86AudioMute",           volumeToggleMute),
@@ -608,7 +619,7 @@ globalbuttons = awful.util.table.join(
 clientkeys = awful.util.table.join(
     awful.key({ modkey,           }, "`",      function (c) c.fullscreen = not c.fullscreen  end),
     awful.key({ modkey,           }, "q",      function (c) c:kill()                         end),
-    awful.key({ modkey,           }, "z",      awful.client.floating.toggle                     ),
+    awful.key({ modkey,           }, "'",      awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
     awful.key({ modkey,           }, "a",      awful.client.movetoscreen                        ),
     awful.key({ modkey,           }, "p",      function (c) c.ontop = not c.ontop            end),
