@@ -7,7 +7,7 @@ theme = {}
 config              = require("awful.util").getdir("config")
 themedir            = config .. "/theme/"
 
-theme.font          = "Terminus 8"
+theme.font          = "Terminus 9"
 
 theme.bg_normal     = "#00000000"
 theme.bg_focus      = "#31040480"
